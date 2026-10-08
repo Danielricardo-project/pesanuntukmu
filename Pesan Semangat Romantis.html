@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pesan Semangat untuk Kamu 💌</title>
+<style>
+:root{--bg:#fff1f4;--bg2:#ffe0e8;--card:#ffffff;--ink:#4a1d2b;--soft:#8a5a68;--accent:#e0507a;--accent2:#ff8fab;--line:#f5c6d3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d0f15;--bg2:#2b1420;--card:#2a1620;--ink:#ffe8ee;--soft:#d6a5b4;--accent:#ff7da0;--accent2:#e0507a;--line:#4a2634}}
+:root[data-theme="dark"]{--bg:#1d0f15;--bg2:#2b1420;--card:#2a1620;--ink:#ffe8ee;--soft:#d6a5b4;--accent:#ff7da0;--accent2:#e0507a;--line:#4a2634}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center;padding:24px 16px 40px;overflow-x:hidden}
+.wrap{width:100%;max-width:460px;text-align:center;position:relative;z-index:1}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:1.8rem;margin:8px 0 4px;line-height:1.2}
+.sub{color:var(--soft);margin:0 0 20px;font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font-size:.88rem;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:0 10px 30px rgba(224,80,122,.15);min-height:190px;display:flex;flex-direction:column;justify-content:center}
+.to{color:var(--accent);font-weight:600;margin-bottom:10px;font-size:.95rem}
+.msg{font-family:Georgia,"Times New Roman",serif;font-size:1.2rem;line-height:1.55;margin:0}
+.fade{animation:f .5s ease}
+@keyframes f{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.btn{display:inline-block;border:0;border-radius:14px;padding:14px 22px;font-size:1rem;font-weight:600;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--accent2),var(--accent));margin-top:18px;width:100%}
+.row{display:flex;gap:10px;margin-top:10px}
+.btn2{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:11px;font-size:.92rem;cursor:pointer}
+.send{margin-top:34px;padding-top:20px;border-top:1px dashed var(--line);text-align:left}
+.send h2{font-size:1rem;margin:0 0 4px}
+.send p{margin:0 0 10px;color:var(--soft);font-size:.88rem}
+.send input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1rem;margin-bottom:8px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.88rem;opacity:0;transition:opacity .25s;pointer-events:none;z-index:5}
+.toast.show{opacity:1}
+.heart{position:fixed;bottom:-30px;font-size:20px;opacity:.7;animation:up 3s linear forwards;pointer-events:none;z-index:0}
+@keyframes up{to{transform:translateY(-110vh);opacity:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="font-size:2.2rem">💌</div>
+  <h1 id="title">Ada pesan kecil buat kamu</h1>
+  <p class="sub">Tekan tombol di bawah setiap kali kamu butuh semangat.</p>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="card">
+    <div class="to" id="to"></div>
+    <p class="msg" id="msg">Tekan tombol di bawah ya 💗</p>
+  </div>
+
+  <button class="btn" id="next">Kasih aku semangat 💗</button>
+  <div class="row">
+    <button class="btn2" id="copy">Salin pesan</button>
+    <button class="btn2" id="wa">Kirim lewat WhatsApp</button>
+  </div>
+
+  <div class="send">
+    <h2>Mau kirim ke seseorang?</h2>
+    <p>Isi namanya, lalu salin link yang sudah dipersonalisasi.</p>
+    <input id="name" placeholder="Nama dia, mis. Aurel" maxlength="30">
+    <button class="btn2" style="width:100%" id="link">Salin link untuk dia</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA={
+ "Semangat harian":[
+  "Hari ini mungkin tidak sempurna, tapi kamu tetap luar biasa. Dan aku bangga sama kamu, sungguh.",
+  "Senyummu itu bisa mengubah hari orang lain jadi lebih cerah. Jadi hari ini, jangan lupa tersenyum ya.",
+  "Kamu lebih kuat dari yang kamu kira, dan lebih berharga dari yang kamu tahu.",
+  "Pelan-pelan juga tidak apa-apa. Yang penting kamu terus melangkah, dan kamu selalu keren di mataku."
+ ],
+ "Lagi capek":[
+  "Kalau hari ini terasa berat, istirahatlah sebentar. Kamu tidak harus kuat sepanjang waktu.",
+  "Capekmu itu valid. Tarik napas, minum air, dan ingat: ada yang diam-diam mendoakan kamu.",
+  "Kamu sudah berusaha sejauh ini. Itu saja sudah hebat. Peluk jauh dariku ya 🤍",
+  "Dunia boleh ribut, tapi kamu berhak tenang. Semoga malam ini tidurmu nyenyak dan mimpimu indah."
+ ],
+ "Sebelum ujian / kerja":[
+  "Kamu sudah belajar dan berusaha. Sekarang waktunya percaya sama dirimu sendiri. Kamu pasti bisa!",
+  "Apapun hasilnya nanti, kamu sudah melakukan yang terbaik. Dan itu cukup, lebih dari cukup.",
+  "Gugup itu tanda kamu peduli. Tenang, kamu lebih siap dari yang kamu pikirkan.",
+  "Semoga semuanya lancar hari ini. Aku percaya kamu, selalu."
+ ],
+ "Manis banget":[
+  "Entah kenapa, hari terasa lebih baik setelah kita ngobrol. Terima kasih sudah jadi kamu.",
+  "Kalau ada yang bilang kamu tidak cukup, mereka belum cukup mengenalmu. Kamu istimewa.",
+  "Kamu itu seperti pelangi setelah hujan: bikin siapa pun yang melihatnya ikut senang.",
+  "Semoga hari ini sebaik kamu. Dan kalau begitu, pasti hari yang indah banget 🌷"
+ ],
+ "Selamat pagi":[
+  "Selamat pagi! Semoga harimu semanis senyummu dan seindah matahari pagi ini ☀️",
+  "Bangun, cantik. Dunia menunggu versi terbaikmu hari ini, dan aku yakin kamu siap.",
+  "Pagi ini aku cuma mau bilang: semangat ya hari ini. Kamu pasti bisa melewati semuanya.",
+  "Semoga kopi atau tehmu hangat, harimu ringan, dan hatimu penuh bahagia ☕"
+ ]
+};
+const cats=Object.keys(DATA);
+let cat="Semua", last="", cur="";
+const $=id=>document.getElementById(id);
+const params=new URLSearchParams(location.search);
+let nama=(params.get("nama")||"").trim().slice(0,30);
+
+function buildChips(){
+  const all=["Semua",...cats];
+  $("chips").innerHTML="";
+  all.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="chip"+(c===cat?" on":"");b.textContent=c;
+    b.onclick=()=>{cat=c;buildChips();pick();};
+    $("chips").appendChild(b);
+  });
+}
+function pool(){return cat==="Semua"?cats.flatMap(c=>DATA[c]):DATA[cat];}
+function pick(){
+  const p=pool();let m;
+  do{m=p[Math.floor(Math.random()*p.length)];}while(m===last&&p.length>1);
+  last=m;cur=m;
+  const el=$("msg");el.classList.remove("fade");void el.offsetWidth;
+  el.textContent=m;el.classList.add("fade");
+  hearts();
+}
+function hearts(){
+  for(let i=0;i<6;i++){
+    const h=document.createElement("div");h.className="heart";
+    h.textContent=["💗","💖","💕","🌷"][i%4];
+    h.style.left=(8+Math.random()*84)+"%";
+    h.style.animationDelay=(Math.random()*.6)+"s";
+    document.body.appendChild(h);setTimeout(()=>h.remove(),4000);
+  }
+}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800);}
+function copyText(t){
+  const done=()=>toast("Tersalin ✓");
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(()=>fb(t,done));return;}
+  }catch(e){}
+  fb(t,done);
+}
+function fb(t,done){
+  const a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";
+  document.body.appendChild(a);a.select();
+  try{document.execCommand("copy");done();}catch(e){toast("Gagal menyalin");}
+  a.remove();
+}
+
+if(nama){
+  $("title").textContent="Untuk "+nama+", dengan sepenuh hati";
+  $("to").textContent="Untuk "+nama+" 💗";
+}
+$("next").onclick=pick;
+$("copy").onclick=()=>{if(!cur)pick();copyText(cur);};
+$("wa").onclick=()=>{
+  if(!cur)pick();
+  window.open("https://wa.me/?text="+encodeURIComponent(cur),"_blank");
+};
+$("link").onclick=()=>{
+  const n=$("name").value.trim();
+  const base=location.origin+location.pathname;
+  copyText(n?base+"?nama="+encodeURIComponent(n):base);
+};
+buildChips();
+</script>
+</body>
+</html>
